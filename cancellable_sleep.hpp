@@ -13,6 +13,7 @@ class cancellable_sleep {
     class cancellable_sleep_impl {
     public:
         virtual sleep_result sleep(std::chrono::milliseconds duration)=0;
+        virtual ~cancellable_sleep_impl()=default;
     };
 
     std::unique_ptr<cancellable_sleep_impl> impl;

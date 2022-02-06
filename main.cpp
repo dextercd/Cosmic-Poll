@@ -53,7 +53,7 @@ int main()
     void const* const memory = mmap(
         nullptr,                                  // addr
         memory_size,                              // length
-        PROT_READ,                                // prot
+        PROT_READ | PROT_WRITE,                   // prot
         MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, // flags
         -1,                                       // fd
         0                                         // offset

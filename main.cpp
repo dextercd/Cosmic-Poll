@@ -6,9 +6,12 @@
 #include <thread>
 #include <variant>
 
+#include <sys/mman.h>
+
 #include <fmt/core.h>
 
-#include <sys/mman.h>
+#include "cancellable_sleep.hpp"
+#include "program_stoppable_sleep.hpp"
 
 auto const polling_time = std::chrono::seconds{15};
 
@@ -17,11 +20,14 @@ struct flip_detected {
     char value;
 };
 
-using monitor_result = std::variant<flip_detected>;
+struct cancelled {};
+
+using monitor_result = std::variant<flip_detected, cancelled>;
 
 monitor_result monitor_memory(
         void const* const memory,
-        std::size_t const size)
+        std::size_t const size,
+        cancellable_sleep& csleep)
 {
     auto const begin = reinterpret_cast<char const*>(memory);
     auto const end = begin + size;
@@ -35,7 +41,8 @@ monitor_result monitor_memory(
             }
         }
 
-        std::this_thread::sleep_for(polling_time);
+        if (csleep.sleep(std::chrono::seconds{15}) == sleep_result::cancelled)
+            return cancelled{};
     }
 }
 
@@ -65,15 +72,21 @@ int main()
         return 2;
     }
 
-    auto const result = monitor_memory(memory, memory_size);
+    cancellable_sleep csleep{program_stoppable_sleep{}};
+
+    auto const result = monitor_memory(memory, memory_size, csleep);
+    fmt::print("\n");
 
     if (std::holds_alternative<flip_detected>(result)) {
         auto const flip = std::get<flip_detected>(result);
-        fmt::print("\nAnomaly detected at offset {:016x} value {:02x}\n", flip.offset, flip.value);
+        fmt::print("Anomaly detected at offset {:016x} value {:02x}\n", flip.offset, flip.value);
         while (true) {
             fmt::print("\a");
             std::fflush(stdout);
             std::this_thread::sleep_for(std::chrono::seconds{1});
         }
+    } else if (std::holds_alternative<cancelled>(result)) {
+        fmt::print("Stop signal received. Stopping..\n");
+        return 0;
     }
 }

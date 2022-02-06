@@ -12,6 +12,7 @@
 
 #include "cancellable_sleep.hpp"
 #include "program_stoppable_sleep.hpp"
+#include "compiler_barrier.hpp"
 
 auto const polling_time = std::chrono::seconds{15};
 
@@ -34,6 +35,9 @@ monitor_result monitor_memory(
     while (true) {
         fmt::print(".");
         std::fflush(stdout);
+
+        COSMIC_COMPILER_READ_BARRIER();
+
         for (auto ptr = begin; ptr != end; ++ptr) {
             if (*ptr != 0) {
                 auto const offset = ptr - begin;

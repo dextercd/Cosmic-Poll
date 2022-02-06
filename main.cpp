@@ -1,9 +1,10 @@
 // IBM says that 256 MiB will have a bit flip every month
 
 #include <chrono>
-#include <thread>
-#include <cstring>
 #include <cstdio>
+#include <cstring>
+#include <thread>
+#include <variant>
 
 #include <fmt/core.h>
 
@@ -11,7 +12,16 @@
 
 auto const polling_time = std::chrono::seconds{15};
 
-void monitor_memory(void const* const memory, std::size_t const size)
+struct flip_detected {
+    std::ptrdiff_t offset;
+    char value;
+};
+
+using monitor_result = std::variant<flip_detected>;
+
+monitor_result monitor_memory(
+        void const* const memory,
+        std::size_t const size)
 {
     auto const begin = reinterpret_cast<char const*>(memory);
     auto const end = begin + size;
@@ -21,12 +31,7 @@ void monitor_memory(void const* const memory, std::size_t const size)
         for (auto ptr = begin; ptr != end; ++ptr) {
             if (*ptr != 0) {
                 auto const offset = ptr - begin;
-                fmt::print("\nAnomaly detected at offset {:016x} value {:02x}\n", offset, *ptr);
-                while (true) {
-                    fmt::print("\a");
-                    std::fflush(stdout);
-                    std::this_thread::sleep_for(std::chrono::seconds{1});
-                }
+                return flip_detected{offset, *ptr};
             }
         }
 
@@ -60,5 +65,15 @@ int main()
         return 2;
     }
 
-    monitor_memory(memory, memory_size);
+    auto const result = monitor_memory(memory, memory_size);
+
+    if (std::holds_alternative<flip_detected>(result)) {
+        auto const flip = std::get<flip_detected>(result);
+        fmt::print("\nAnomaly detected at offset {:016x} value {:02x}\n", flip.offset, flip.value);
+        while (true) {
+            fmt::print("\a");
+            std::fflush(stdout);
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+        }
+    }
 }

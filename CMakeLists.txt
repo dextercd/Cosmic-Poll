@@ -7,8 +7,8 @@ include(CTest)
 find_package(fmt REQUIRED)
 
 add_executable(cosmic_poll
-    main.cpp
-    program_stoppable_sleep.cpp
+    src/main.cpp
+    src/program_stoppable_sleep.cpp
 )
 target_link_libraries(cosmic_poll PRIVATE fmt::fmt)
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)
@@ -19,7 +19,7 @@ if (BUILD_TESTING)
     )
 
     target_include_directories(read_barrier_test
-        PRIVATE .
+        PRIVATE src/
     )
 
     target_link_libraries(read_barrier_test PRIVATE fmt::fmt)

@@ -1,5 +1,5 @@
 #include <initializer_list>
-#include <stdexcept>
+#include <system_error>
 
 #include <signal.h>
 #include <sys/signalfd.h>
@@ -13,8 +13,12 @@ struct signal_set {
     signal_set()
     {
         auto const result = sigemptyset(&handle);
-        if (result == -1)
-            throw std::runtime_error{"Couldn't create signal set."};
+        if (result == -1) {
+            auto const sigemptyset_error = errno;
+            throw std::system_error{
+                sigemptyset_error, std::generic_category(),
+                "Couldn't create signal set."};
+        }
     }
 
     signal_set(std::initializer_list<int> signals)
@@ -26,8 +30,12 @@ struct signal_set {
     void add(int signum)
     {
         auto const result = sigaddset(&handle, signum);
-        if (result == -1)
-            throw std::runtime_error{"Couldn't add signal number to signal set."};
+        if (result == -1) {
+            auto const sigaddset_error = errno;
+            throw std::system_error{
+                sigaddset_error, std::generic_category(),
+                "Couldn't add signal number to signal set."};
+        }
     }
 
     void add(std::initializer_list<int> signals)
@@ -61,8 +69,12 @@ public:
     int signalfd() const
     {
         int const fd = ::signalfd(-1, &signals.handle, {});
-        if (fd == -1)
-            throw std::runtime_error{"Couldn't open signalfd."};
+        if (fd == -1) {
+            auto const signalfd_error = errno;
+            throw std::system_error{
+                signalfd_error, std::generic_category(),
+                "Couldn't open signalfd."};
+        }
         return fd;
     }
 };
@@ -94,7 +106,9 @@ sleep_result program_stoppable_sleep::sleep(std::chrono::milliseconds units)
         auto const result = select(signalfd + 1, &rdfs, nullptr, nullptr, &timeout);
         if (result == -1) {
             auto const select_error = errno;
-            throw std::runtime_error{"select() failed. " + std::to_string(select_error)};
+            throw std::system_error{
+                select_error, std::generic_category(),
+                "select() failed."};
         }
 
         return result == 0 ? sleep_result::slept : sleep_result::cancelled;

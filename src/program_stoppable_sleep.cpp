@@ -2,11 +2,11 @@
 #include <system_error>
 
 #include <signal.h>
-#include <sys/signalfd.h>
 #include <sys/select.h>
+#include <sys/signalfd.h>
 
-#include "signal_set.hpp"
 #include "program_stoppable_sleep.hpp"
+#include "signal_set.hpp"
 
 class program_stop_detect_engine {
 private:
@@ -24,7 +24,8 @@ private:
     }
 
 public:
-    static program_stop_detect_engine const& instance() {
+    static program_stop_detect_engine const& instance()
+    {
         static auto self = program_stop_detect_engine{};
         return self;
     }
@@ -35,8 +36,7 @@ public:
         if (fd == -1) {
             auto const signalfd_error = errno;
             throw std::system_error{
-                signalfd_error, std::generic_category(),
-                "Couldn't open signalfd."};
+                    signalfd_error, std::generic_category(), "Couldn't open signalfd."};
         }
         return fd;
     }
@@ -56,10 +56,7 @@ void program_stoppable_sleep::close()
 sleep_result program_stoppable_sleep::sleep(std::chrono::milliseconds units)
 {
     auto const ms = units.count();
-    timeval timeout{
-        ms / 1000,
-        1000 * (ms % 1000)
-    };
+    timeval timeout{ms / 1000, 1000 * (ms % 1000)};
 
     fd_set rdfs;
     FD_ZERO(&rdfs);
@@ -69,8 +66,7 @@ sleep_result program_stoppable_sleep::sleep(std::chrono::milliseconds units)
     if (result == -1) {
         auto const select_error = errno;
         throw std::system_error{
-            select_error, std::generic_category(),
-            "select() failed."};
+                select_error, std::generic_category(), "select() failed."};
     }
 
     return result == 0 ? sleep_result::slept : sleep_result::cancelled;

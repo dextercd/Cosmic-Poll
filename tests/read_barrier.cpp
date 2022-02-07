@@ -3,8 +3,8 @@
 
 #include <compiler_barrier.hpp>
 
-[[gnu::section("without_read_barrier")]]
-[[gnu::used]]
+[[gnu::section("without_read_barrier")]] // Separate secion so we can measure the size
+[[gnu::used]] // Don't optimize away
 int without_read_barrier(int* ip)
 {
     int a = *ip;
@@ -16,8 +16,8 @@ int without_read_barrier(int* ip)
     return a + b + c + d + e;
 }
 
-[[gnu::section("with_read_barrier")]]
-[[gnu::used]]
+[[gnu::section("with_read_barrier")]] // Separate secion so we can measure the size
+[[gnu::used]] // Don't optimize away
 int with_read_barrier(int* ip)
 {
     COSMIC_COMPILER_READ_BARRIER();
@@ -42,7 +42,8 @@ extern char const __stop_with_read_barrier;
 
 int main()
 {
-    auto without_barrier_size = &__stop_without_read_barrier - &__start_without_read_barrier;
+    auto without_barrier_size =
+            &__stop_without_read_barrier - &__start_without_read_barrier;
     auto with_barrier_size = &__stop_with_read_barrier - &__start_with_read_barrier;
 
     if (with_barrier_size <= without_barrier_size) {

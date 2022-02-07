@@ -43,7 +43,7 @@ public:
     sleep_result sleep(std::chrono::duration<Rep, Period> duration)
     {
         auto const units =
-            std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+                std::chrono::duration_cast<std::chrono::milliseconds>(duration);
         return impl->sleep(units);
     }
 };

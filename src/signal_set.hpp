@@ -16,8 +16,8 @@ struct signal_set {
         if (result == -1) {
             auto const sigemptyset_error = errno;
             throw std::system_error{
-                sigemptyset_error, std::generic_category(),
-                "Couldn't create signal set."};
+                    sigemptyset_error, std::generic_category(),
+                    "Couldn't create signal set."};
         }
     }
 
@@ -33,8 +33,8 @@ struct signal_set {
         if (result == -1) {
             auto const sigaddset_error = errno;
             throw std::system_error{
-                sigaddset_error, std::generic_category(),
-                "Couldn't add signal number to signal set."};
+                    sigaddset_error, std::generic_category(),
+                    "Couldn't add signal number to signal set."};
         }
     }
 

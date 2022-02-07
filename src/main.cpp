@@ -52,7 +52,7 @@ monitor_result monitor_memory(
 
 constexpr std::size_t memory_size = 256 * 1024 * 1024;
 
-int main()
+int run()
 {
     void const* const memory = mmap(
         nullptr,                                  // addr
@@ -91,6 +91,19 @@ int main()
         }
     } else if (std::holds_alternative<cancelled>(result)) {
         fmt::print("Stop signal received. Stopping..\n");
-        return 0;
+    }
+
+    return 0;
+}
+
+int main()
+{
+    try {
+        return run();
+    } catch (std::exception const& exc) {
+        fmt::print(stderr, "Fatal exception: {}\n", exc.what());
+        return 1;
+    } catch (...) {
+        fmt::print(stderr, "Fatal unknown exception.\n");
     }
 }

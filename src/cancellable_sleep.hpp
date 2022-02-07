@@ -12,8 +12,8 @@ enum class sleep_result {
 class cancellable_sleep {
     class cancellable_sleep_impl {
     public:
-        virtual sleep_result sleep(std::chrono::milliseconds duration)=0;
-        virtual ~cancellable_sleep_impl()=default;
+        virtual sleep_result sleep(std::chrono::milliseconds duration) = 0;
+        virtual ~cancellable_sleep_impl() = default;
     };
 
     std::unique_ptr<cancellable_sleep_impl> impl;
@@ -40,8 +40,10 @@ public:
     }
 
     template<class Rep, class Period>
-    sleep_result sleep(std::chrono::duration<Rep, Period> duration) {
-        auto const units = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+    sleep_result sleep(std::chrono::duration<Rep, Period> duration)
+    {
+        auto const units =
+            std::chrono::duration_cast<std::chrono::milliseconds>(duration);
         return impl->sleep(units);
     }
 };

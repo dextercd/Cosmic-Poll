@@ -45,7 +45,7 @@ monitor_result monitor_memory(
             }
         }
 
-        if (csleep.sleep(std::chrono::seconds{15}) == sleep_result::cancelled)
+        if (csleep.sleep(polling_time) == sleep_result::cancelled)
             return cancelled{};
     }
 }

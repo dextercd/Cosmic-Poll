@@ -96,11 +96,8 @@ int run()
         fmt::print(
                 "Anomaly detected at offset {:016x} value {:02x}\n", flip.offset,
                 flip.value);
-        while (true) {
-            fmt::print("\a");
-            std::fflush(stdout);
-            std::this_thread::sleep_for(std::chrono::seconds{1});
-        }
+        fmt::print("\a");
+        std::fflush(stdout);
     } else if (std::holds_alternative<cancelled>(result)) {
         fmt::print("Stop signal received. Stopping..\n");
     }

@@ -36,7 +36,7 @@ public:
             }
         };
 
-        impl.reset(new wrapper{std::move(implementation)});
+        impl = std::make_unique<wrapper>(std::move(implementation));
     }
 
     template<class Rep, class Period>

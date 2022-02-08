@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(cosmic_detector LANGUAGES CXX)
+project(CosmicPoll LANGUAGES CXX)
 
 include(CTest)
 

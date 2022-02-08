@@ -5,12 +5,24 @@ project(cosmic_detector LANGUAGES CXX)
 include(CTest)
 
 find_package(fmt REQUIRED)
+find_package(SQLite3 REQUIRED)
 
 add_executable(cosmic_poll
     src/main.cpp
     src/program_stoppable_sleep.cpp
+    src/sqlite_connection.cpp
+    src/sqlite_statement.cpp
+    src/observation_logger.cpp
+    src/log_db_engine.cpp
+    src/create_log_db.cpp
 )
-target_link_libraries(cosmic_poll PRIVATE fmt::fmt)
+
+target_link_libraries(cosmic_poll
+    PRIVATE
+        fmt::fmt
+        SQLite::SQLite3
+)
+
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)
 
 if (BUILD_TESTING)

@@ -12,6 +12,8 @@
 
 #include "cancellable_sleep.hpp"
 #include "compiler_barrier.hpp"
+#include "log_db_engine.hpp"
+#include "observation_logger.hpp"
 #include "program_stoppable_sleep.hpp"
 
 auto const polling_time = std::chrono::seconds{15};
@@ -26,7 +28,8 @@ struct cancelled {};
 using monitor_result = std::variant<flip_detected, cancelled>;
 
 monitor_result monitor_memory(
-        void const* const memory, std::size_t const size, cancellable_sleep& csleep)
+        void const* const memory, std::size_t const size, cancellable_sleep& csleep,
+        observation_logger& logger)
 {
     auto const begin = reinterpret_cast<char const*>(memory);
     auto const end = begin + size;
@@ -34,12 +37,18 @@ monitor_result monitor_memory(
         fmt::print(".");
         std::fflush(stdout);
 
+        logger.active();
+
         COSMIC_COMPILER_READ_BARRIER();
 
         for (auto ptr = begin; ptr != end; ++ptr) {
             if (*ptr != 0) {
                 auto const offset = ptr - begin;
-                return flip_detected{offset, *ptr};
+                auto const value = *ptr;
+
+                logger.found_anomaly(offset, value);
+
+                return flip_detected{offset, value};
             }
         }
 
@@ -74,9 +83,12 @@ int run()
         return 2;
     }
 
+    observation_logger logger{
+            log_db_engine{"/var/lib/cosmic_poll/activity.sqlite"}, memory_size};
+
     cancellable_sleep csleep{program_stoppable_sleep{}};
 
-    auto const result = monitor_memory(memory, memory_size, csleep);
+    auto const result = monitor_memory(memory, memory_size, csleep, logger);
     fmt::print("\n");
 
     if (std::holds_alternative<flip_detected>(result)) {

@@ -1,8 +1,10 @@
 // IBM says that 256 MiB will have a bit flip every month
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <cstring>
+#include <execution>
 #include <thread>
 #include <variant>
 
@@ -41,15 +43,16 @@ monitor_result monitor_memory(
 
         COSMIC_COMPILER_READ_BARRIER();
 
-        for (auto ptr = begin; ptr != end; ++ptr) {
-            if (*ptr != 0) {
-                auto const offset = ptr - begin;
-                auto const value = *ptr;
+        auto ptr = std::find_if(
+                std::execution::unseq, begin, end, [](auto v) { return v != 0; });
 
-                logger.found_anomaly(offset, value);
+        if (ptr != end) {
+            auto const offset = ptr - begin;
+            auto const value = *ptr;
 
-                return flip_detected{offset, value};
-            }
+            logger.found_anomaly(offset, value);
+
+            return flip_detected{offset, value};
         }
 
         if (csleep.sleep(polling_time) == sleep_result::cancelled)

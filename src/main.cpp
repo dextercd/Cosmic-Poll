@@ -18,7 +18,7 @@
 #include "observation_logger.hpp"
 #include "program_stoppable_sleep.hpp"
 
-auto const polling_interval = std::chrono::seconds{15};
+auto const polling_interval = std::chrono::seconds{5 * 60};
 
 struct flip_detected {
     std::ptrdiff_t offset;

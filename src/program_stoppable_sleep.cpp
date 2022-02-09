@@ -10,7 +10,7 @@
 
 class program_stop_detect_engine {
 private:
-    signal_set const signals{SIGINT, SIGTERM};
+    signal_set const signals{SIGHUP, SIGINT, SIGTERM};
     signal_set restore;
 
     program_stop_detect_engine()

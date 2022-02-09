@@ -5,7 +5,10 @@
 
 sqlite_connection::sqlite_connection(char const* const filename)
 {
-    auto const result = sqlite3_open(filename, &handle);
+    auto const result = sqlite3_open_v2(
+            filename, &handle,
+            SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_EXRESCODE, nullptr);
+
     if (result != SQLITE_OK) {
         char const* error_message;
         if (handle) {
@@ -17,8 +20,6 @@ sqlite_connection::sqlite_connection(char const* const filename)
 
         throw sqlite_connection_failure{error_message};
     }
-
-    sqlite3_extended_result_codes(handle, true);
 }
 
 sqlite_connection::~sqlite_connection()

@@ -1,64 +1,17 @@
 // IBM says that 256 MiB will have a bit flip every month
 
-#include <algorithm>
-#include <chrono>
+#include <cstddef>
 #include <cstdio>
-#include <cstring>
-#include <execution>
-#include <thread>
-#include <variant>
 
 #include <sys/mman.h>
 
 #include <fmt/core.h>
 
 #include "cancellable_sleep.hpp"
-#include "compiler_barrier.hpp"
 #include "log_db_engine.hpp"
+#include "memory_monitor.hpp"
 #include "observation_logger.hpp"
 #include "program_stoppable_sleep.hpp"
-
-auto const polling_interval = std::chrono::seconds{5 * 60};
-
-struct flip_detected {
-    std::ptrdiff_t offset;
-    char value;
-};
-
-struct cancelled {};
-
-using monitor_result = std::variant<flip_detected, cancelled>;
-
-monitor_result monitor_memory(
-        void const* const memory, std::size_t const size, cancellable_sleep& csleep,
-        observation_logger& logger)
-{
-    auto const begin = reinterpret_cast<char const*>(memory);
-    auto const end = begin + size;
-    while (true) {
-        fmt::print(".");
-        std::fflush(stdout);
-
-        logger.active();
-
-        COSMIC_COMPILER_READ_BARRIER();
-
-        auto ptr = std::find_if(
-                std::execution::unseq, begin, end, [](auto v) { return v != 0; });
-
-        if (ptr != end) {
-            auto const offset = ptr - begin;
-            auto const value = *ptr;
-
-            logger.found_anomaly(offset, value);
-
-            return flip_detected{offset, value};
-        }
-
-        if (csleep.sleep(polling_interval) == sleep_result::cancelled)
-            return cancelled{};
-    }
-}
 
 constexpr std::size_t memory_size = 256 * 1024 * 1024;
 

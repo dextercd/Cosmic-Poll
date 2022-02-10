@@ -15,6 +15,7 @@ add_executable(cosmic_poll
     src/observation_logger.cpp
     src/log_db_engine.cpp
     src/create_log_db.cpp
+    src/memory_monitor.cpp
 )
 
 target_link_libraries(cosmic_poll

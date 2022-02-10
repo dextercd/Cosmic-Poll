@@ -35,14 +35,14 @@ int run()
 
     if (memory == (void*)-1) {
         auto const mmap_errno = errno;
-        fmt::print("mmap failed with error code: {}\n", strerror(mmap_errno));
+        fmt::print(stderr, "mmap failed with error code: {}\n", strerror(mmap_errno));
         return exit_code::memory_alloc_error;
     }
 
     auto const mlock_status = mlock(memory, memory_size);
     if (mlock_status == -1) {
         auto const mlock_errno = errno;
-        fmt::print("mlock failed with error code: {}\n", strerror(mlock_errno));
+        fmt::print(stderr, "mlock failed with error code: {}\n", strerror(mlock_errno));
         return exit_code::memory_alloc_error;
     }
 

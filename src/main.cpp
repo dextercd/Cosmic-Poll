@@ -13,6 +13,13 @@
 #include "observation_logger.hpp"
 #include "program_stoppable_sleep.hpp"
 
+enum exit_code {
+    success = 0,
+    memory_alloc_error,
+    exception,
+    unknown_exception,
+};
+
 constexpr std::size_t memory_size = 256 * 1024 * 1024;
 
 int run()
@@ -29,14 +36,14 @@ int run()
     if (memory == (void*)-1) {
         auto const mmap_errno = errno;
         fmt::print("mmap failed with error code: {}\n", strerror(mmap_errno));
-        return 1;
+        return exit_code::memory_alloc_error;
     }
 
     auto const mlock_status = mlock(memory, memory_size);
     if (mlock_status == -1) {
         auto const mlock_errno = errno;
         fmt::print("mlock failed with error code: {}\n", strerror(mlock_errno));
-        return 2;
+        return exit_code::memory_alloc_error;
     }
 
     observation_logger logger{
@@ -58,7 +65,7 @@ int run()
         fmt::print("Stop signal received. Stopping..\n");
     }
 
-    return 0;
+    return exit_code::success;
 }
 
 int main()
@@ -67,8 +74,9 @@ int main()
         return run();
     } catch (std::exception const& exc) {
         fmt::print(stderr, "Fatal exception: {}\n", exc.what());
-        return 1;
+        return exit_code::exception;
     } catch (...) {
         fmt::print(stderr, "Fatal unknown exception.\n");
+        return exit_code::unknown_exception;
     }
 }

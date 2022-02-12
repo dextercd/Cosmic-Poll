@@ -1,11 +1,22 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(CosmicPoll LANGUAGES CXX)
+option(COSMIC_SELF_CONTAINED "Build dependencies instead of looking for them" OFF)
+
+set(LANGUAGES CXX)
+if (COSMIC_SELF_CONTAINED)
+    list(APPEND LANGUAGES C)
+endif()
+
+project(CosmicPoll LANGUAGES ${LANGUAGES})
 
 include(CTest)
 
-find_package(fmt REQUIRED)
-find_package(SQLite3 REQUIRED)
+if (COSMIC_SELF_CONTAINED)
+    add_subdirectory(dependencies)
+else()
+    find_package(fmt REQUIRED)
+    find_package(SQLite3 REQUIRED)
+endif()
 
 add_executable(cosmic_poll
     src/main.cpp

@@ -1,5 +1,4 @@
 include(FetchContent)
-include(ExternalProject)
 
 # fmt
 FetchContent_Declare(

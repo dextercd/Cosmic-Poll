@@ -4,6 +4,7 @@ option(COSMIC_SELF_CONTAINED "Build dependencies instead of looking for them" OF
 
 set(LANGUAGES CXX)
 if (COSMIC_SELF_CONTAINED)
+    # Needed to build C dependencies (SQLite)
     list(APPEND LANGUAGES C)
 endif()
 

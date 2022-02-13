@@ -8,6 +8,7 @@
 #include <fmt/core.h>
 
 #include "cancellable_sleep.hpp"
+#include "command_line.hpp"
 #include "log_db_engine.hpp"
 #include "memory_monitor.hpp"
 #include "observation_logger.hpp"
@@ -18,6 +19,7 @@ enum exit_code {
     memory_alloc_error,
     exception,
     unknown_exception,
+    parse_error,
 };
 
 int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
@@ -67,10 +69,18 @@ int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
     return exit_code::success;
 }
 
-int main()
+int main(int argc, char** argv)
 {
     try {
-        return run(256 * 1024 * 1024, std::chrono::seconds{5 * 60});
+        auto const parse_result = parse_args(argc, argv);
+        if (holds_alternative<no_options>(parse_result)) {
+            auto const res = std::get<no_options>(parse_result);
+            return res == no_options::help_requested ? exit_code::success
+                                                     : exit_code::parse_error;
+        } else if (holds_alternative<options>(parse_result)) {
+            auto const opts = std::get<options>(parse_result);
+            return run(opts.alloc_size, opts.check_interval);
+        }
     } catch (std::exception const& exc) {
         fmt::print(stderr, "Fatal exception: {}\n", exc.what());
         return exit_code::exception;

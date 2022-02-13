@@ -7,11 +7,9 @@
 #include "compiler_barrier.hpp"
 #include "memory_monitor.hpp"
 
-auto const polling_interval = std::chrono::seconds{5 * 60};
-
 monitor_result monitor_memory(
         void const* const memory, std::size_t const size, cancellable_sleep& csleep,
-        observation_logger& logger)
+        observation_logger& logger, std::chrono::milliseconds polling_interval)
 {
     auto const begin = reinterpret_cast<char const*>(memory);
     auto const end = begin + size;

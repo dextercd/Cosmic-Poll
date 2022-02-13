@@ -20,9 +20,7 @@ enum exit_code {
     unknown_exception,
 };
 
-constexpr std::size_t memory_size = 256 * 1024 * 1024;
-
-int run()
+int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
 {
     void const* const memory =
             mmap(nullptr,                                  // addr
@@ -51,7 +49,8 @@ int run()
 
     cancellable_sleep csleep{program_stoppable_sleep{}};
 
-    auto const result = monitor_memory(memory, memory_size, csleep, logger);
+    auto const result =
+            monitor_memory(memory, memory_size, csleep, logger, polling_interval);
     fmt::print("\n");
 
     if (std::holds_alternative<flip_detected>(result)) {
@@ -71,7 +70,7 @@ int run()
 int main()
 {
     try {
-        return run();
+        return run(256 * 1024 * 1024, std::chrono::seconds{5 * 60});
     } catch (std::exception const& exc) {
         fmt::print(stderr, "Fatal exception: {}\n", exc.what());
         return exit_code::exception;

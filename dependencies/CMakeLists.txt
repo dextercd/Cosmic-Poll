@@ -35,3 +35,12 @@ target_compile_definitions(sqlite3
         SQLITE_THREADSAFE=0
         SQLITE_OMIT_LOAD_EXTENSION
 )
+
+# CLI11
+FetchContent_Declare(
+    CLI11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG v2.1.2
+)
+
+FetchContent_MakeAvailable(CLI11)

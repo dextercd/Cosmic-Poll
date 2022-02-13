@@ -17,6 +17,7 @@ if (COSMIC_SELF_CONTAINED)
 else()
     find_package(fmt REQUIRED)
     find_package(SQLite3 REQUIRED)
+    find_package(CLI11 REQUIRED)
 endif()
 
 add_executable(cosmic_poll
@@ -28,12 +29,14 @@ add_executable(cosmic_poll
     src/log_db_engine.cpp
     src/create_log_db.cpp
     src/memory_monitor.cpp
+    src/command_line.cpp
 )
 
 target_link_libraries(cosmic_poll
     PRIVATE
         fmt::fmt
         SQLite::SQLite3
+        CLI11::CLI11
 )
 
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)

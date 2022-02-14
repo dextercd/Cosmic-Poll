@@ -48,5 +48,8 @@ if {$value != $detected_value} {
     exit 1
 }
 
+set db_location [dict get $cosmic_poll_info db_location]
+file delete -- $db_location
+
 send_user "Success!\n"
 exit 0

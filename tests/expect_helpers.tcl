@@ -28,6 +28,10 @@ proc expect_running {{prefix ""}} {
     }
 }
 
+proc random_file_name {} {
+    return [expr int(999999999 * rand())]
+}
+
 proc start_cosmic_poll {
         {gdb_command gdb}
         {cosmic_poll_command cosmic_poll}
@@ -35,10 +39,12 @@ proc start_cosmic_poll {
         {check_interval 100ms}
 } {
     global spawn_id
+    set db_location /tmp/cosmic_poll_[random_file_name].db
     spawn $gdb_command --interpreter=mi3 --args      \
                 $cosmic_poll_command                 \
                     --alloc-size $alloc_size         \
-                    --check-interval $check_interval
+                    --check-interval $check_interval \
+                    --db-location $db_location
 
     expect_prompt
 
@@ -91,5 +97,6 @@ proc start_cosmic_poll {
         alloc_size          $alloc_size          \
         check_interval      $check_interval      \
         monitored_address   $monitored_address   \
+        db_location         $db_location         \
     ]
 }

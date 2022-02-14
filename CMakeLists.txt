@@ -22,11 +22,19 @@ else()
     find_package(CLI11 REQUIRED)
 endif()
 
+add_library(sqlite_wrapper
+    src/sqlite_connection.cpp
+    src/sqlite_statement.cpp
+)
+
+target_link_libraries(sqlite_wrapper
+    PRIVATE
+        SQLite::SQLite3
+)
+
 add_executable(cosmic_poll
     src/main.cpp
     src/program_stoppable_sleep.cpp
-    src/sqlite_connection.cpp
-    src/sqlite_statement.cpp
     src/observation_logger.cpp
     src/log_db_engine.cpp
     src/create_log_db.cpp
@@ -37,7 +45,7 @@ add_executable(cosmic_poll
 target_link_libraries(cosmic_poll
     PRIVATE
         fmt::fmt
-        SQLite::SQLite3
+        sqlite_wrapper
         CLI11::CLI11
 )
 

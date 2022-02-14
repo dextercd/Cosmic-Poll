@@ -42,20 +42,5 @@ target_link_libraries(cosmic_poll
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)
 
 if (BUILD_TESTING)
-    add_executable(read_barrier_test
-        tests/read_barrier.cpp
-    )
-
-    target_include_directories(read_barrier_test
-        PRIVATE src/
-    )
-
-    target_link_libraries(read_barrier_test PRIVATE fmt::fmt)
-
-    # Force optimisations on for read_barrier_test since this test relies on
-    # seeing if the read barrier successfully prevented certain compiler
-    # optimisations.
-    target_compile_options(read_barrier_test PRIVATE -O3)
-
-    add_test(NAME "Read barrier" COMMAND read_barrier_test)
+    add_subdirectory(tests)
 endif()

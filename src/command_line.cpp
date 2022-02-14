@@ -1,11 +1,13 @@
 #include <chrono>
 #include <cstdint>
+#include <filesystem>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
 
 #include "command_line.hpp"
+#include "compile_paths.hpp"
 
 std::map<std::string, std::uint64_t> create_duration_mapping()
 {
@@ -31,6 +33,7 @@ parse_result parse_args(int argc, char const* const* argv)
 {
     std::uint64_t alloc_size = 256 * 1024 * 1024;
     std::chrono::milliseconds check_interval = std::chrono::minutes{5};
+    std::filesystem::path db_location = default_db_location;
 
     CLI::App app{
             "Allocate some memory and periodically check it for cosmic ray bit flips."};
@@ -44,6 +47,8 @@ parse_result parse_args(int argc, char const* const* argv)
             ->option_text("<number> <unit (seconds, minutes, ..)>")
             ->transform(duration_transform);
 
+    app.add_option("--db-location", db_location)->capture_default_str();
+
     try {
         app.parse(argc, argv);
     } catch (CLI::Error const& err) {
@@ -55,5 +60,5 @@ parse_result parse_args(int argc, char const* const* argv)
         return no_options::parse_error;
     }
 
-    return options{alloc_size, check_interval};
+    return options{alloc_size, check_interval, db_location};
 }

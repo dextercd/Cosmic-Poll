@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
 option(COSMIC_SELF_CONTAINED "Build dependencies instead of looking for them" OFF)
+set(COSMIC_DEFAULT_DB_LOCATION "/var/lib/cosmic_poll/activity.sqlite"
+    CACHE FILEPATH
+    "Location used for database when none is specified")
 
 set(LANGUAGES CXX)
 if (COSMIC_SELF_CONTAINED)
@@ -32,6 +35,12 @@ target_link_libraries(sqlite_wrapper
         SQLite::SQLite3
 )
 
+set_property(SOURCE src/compile_paths.cpp
+    APPEND
+    PROPERTY COMPILE_DEFINITIONS
+        "COSMIC_DEFAULT_DB_LOCATION=\"${COSMIC_DEFAULT_DB_LOCATION}\""
+)
+
 add_executable(cosmic_poll
     src/main.cpp
     src/program_stoppable_sleep.cpp
@@ -40,6 +49,7 @@ add_executable(cosmic_poll
     src/create_log_db.cpp
     src/memory_monitor.cpp
     src/command_line.cpp
+    src/compile_paths.cpp
 )
 
 target_link_libraries(cosmic_poll

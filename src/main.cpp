@@ -22,11 +22,11 @@ enum exit_code {
     parse_error,
 };
 
-int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
+int run(options const& opts)
 {
     void const* const memory =
             mmap(nullptr,                                  // addr
-                 memory_size,                              // length
+                 opts.alloc_size,                          // length
                  PROT_READ | PROT_WRITE,                   // prot
                  MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, // flags
                  -1,                                       // fd
@@ -39,20 +39,19 @@ int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
         return exit_code::memory_alloc_error;
     }
 
-    auto const mlock_status = mlock(memory, memory_size);
+    auto const mlock_status = mlock(memory, opts.alloc_size);
     if (mlock_status == -1) {
         auto const mlock_errno = errno;
         fmt::print(stderr, "mlock failed with error code: {}\n", strerror(mlock_errno));
         return exit_code::memory_alloc_error;
     }
 
-    observation_logger logger{
-            log_db_engine{"/var/lib/cosmic_poll/activity.sqlite"}, memory_size};
+    observation_logger logger{log_db_engine{opts.db_location.c_str()}, opts.alloc_size};
 
     cancellable_sleep csleep{program_stoppable_sleep{}};
 
     auto const result =
-            monitor_memory(memory, memory_size, csleep, logger, polling_interval);
+            monitor_memory(memory, opts.alloc_size, csleep, logger, opts.check_interval);
     fmt::print("\n");
 
     if (std::holds_alternative<flip_detected>(result)) {
@@ -79,7 +78,7 @@ int main(int argc, char** argv)
                                                      : exit_code::parse_error;
         } else if (holds_alternative<options>(parse_result)) {
             auto const opts = std::get<options>(parse_result);
-            return run(opts.alloc_size, opts.check_interval);
+            return run(opts);
         }
     } catch (std::exception const& exc) {
         fmt::print(stderr, "Fatal exception: {}\n", exc.what());

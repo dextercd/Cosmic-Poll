@@ -2,11 +2,13 @@
 #define COSMIC_COMMAND_LINE_HPP
 
 #include <chrono>
+#include <filesystem>
 #include <variant>
 
 struct options {
     std::uint64_t alloc_size;
     std::chrono::milliseconds check_interval;
+    std::filesystem::path db_location;
 };
 
 enum class no_options {

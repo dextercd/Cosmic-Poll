@@ -10,6 +10,8 @@ endif()
 
 project(CosmicPoll LANGUAGES ${LANGUAGES})
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 include(CTest)
 
 if (COSMIC_SELF_CONTAINED)

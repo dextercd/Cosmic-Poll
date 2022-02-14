@@ -1,7 +1,7 @@
 package require Expect
 
 set script_dir [file dirname [info script]]
-source [file join $script_dir "expect_helpers.tcl"]
+source [file join $script_dir "expect_gdb_helpers.tcl"]
 
 lassign $argv gdb_location cosmic_poll_location
 

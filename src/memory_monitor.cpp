@@ -11,7 +11,7 @@ monitor_result monitor_memory(
         void const* const memory, std::size_t const size, cancellable_sleep& csleep,
         observation_logger& logger, std::chrono::milliseconds polling_interval)
 {
-    auto const begin = reinterpret_cast<char const*>(memory);
+    auto const begin = reinterpret_cast<unsigned char const*>(memory);
     auto const end = begin + size;
     while (true) {
         fmt::print(".");

@@ -10,7 +10,7 @@
 
 struct flip_detected {
     std::ptrdiff_t offset;
-    char value;
+    unsigned char value;
 };
 
 struct cancelled {};

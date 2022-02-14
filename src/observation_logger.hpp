@@ -14,7 +14,7 @@ class observation_logger {
                 observation::duration duration, observation::time_point now,
                 std::size_t byte_count) = 0;
         virtual void log_anomaly(
-                observation::time_point now, std::size_t offset, char value,
+                observation::time_point now, std::size_t offset, unsigned char value,
                 std::size_t byte_count) = 0;
         virtual ~base_engine() = default;
     };
@@ -50,7 +50,7 @@ public:
             }
 
             void log_anomaly(
-                    observation::time_point now, std::size_t offset, char value,
+                    observation::time_point now, std::size_t offset, unsigned char value,
                     std::size_t byte_count) override
             {
                 return engine.log_anomaly(now, offset, value, byte_count);
@@ -64,7 +64,7 @@ public:
 
     void active();
     void dump_active();
-    void found_anomaly(std::size_t offset, char value);
+    void found_anomaly(std::size_t offset, unsigned char value);
 };
 
 #endif // header guard

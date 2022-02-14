@@ -40,7 +40,8 @@ void observation_logger::dump_active()
     }
 }
 
-void observation_logger::found_anomaly(std::size_t const offset, char const value)
+void observation_logger::found_anomaly(
+        std::size_t const offset, unsigned char const value)
 {
     period_end = std::chrono::time_point_cast<observation::duration>(
             observation::clock::now());

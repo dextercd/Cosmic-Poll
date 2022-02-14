@@ -33,8 +33,8 @@ void log_db_engine::log_active_period(
 }
 
 void log_db_engine::log_anomaly(
-        observation::time_point const now, std::size_t const offset, char const value,
-        std::size_t const byte_count)
+        observation::time_point const now, std::size_t const offset,
+        unsigned char const value, std::size_t const byte_count)
 {
     auto statement = sqlite_statement{connection, R"(
             INSERT INTO anomalies(time_submitted, offset, value, bytes)

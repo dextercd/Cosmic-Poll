@@ -59,7 +59,7 @@ int run(std::size_t memory_size, std::chrono::milliseconds polling_interval)
         auto const flip = std::get<flip_detected>(result);
         fmt::print(
                 "Anomaly detected at offset {:016x} value {:02x}\n", flip.offset,
-                (unsigned char)flip.value);
+                flip.value);
         fmt::print("\a");
         std::fflush(stdout);
     } else if (std::holds_alternative<cancelled>(result)) {

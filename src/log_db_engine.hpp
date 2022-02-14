@@ -18,7 +18,7 @@ public:
             std::size_t byte_count);
 
     void log_anomaly(
-            observation::time_point now, std::size_t offset, char value,
+            observation::time_point now, std::size_t offset, unsigned char value,
             std::size_t byte_count);
 };
 

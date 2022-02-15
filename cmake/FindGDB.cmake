@@ -6,7 +6,7 @@ if (GDB_EXECUTABLE)
         OUTPUT_VARIABLE GDB_VERSION_OUTPUT
     )
 
-    if (NOT GDB_VERSION_OUTPUT MATCHES "GNU gdb \\(GDB\\) ([0-9]+\.[0-9]+)")
+    if (NOT GDB_VERSION_OUTPUT MATCHES "GNU gdb \\([^)]*\\) ([0-9]+\.[0-9]+)")
         message(FATAL_ERROR "Couldn't get gdb version number from output: ${GDB_VERSION_OUTPUT}")
     endif()
 

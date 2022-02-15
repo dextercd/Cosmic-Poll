@@ -1,0 +1,58 @@
+---
+name: CMake
+
+on:
+  - push
+
+
+jobs:
+  build:
+    strategy:
+      # If one build fails we still want to run the rest of them
+      fail-fast: false
+
+      matrix:
+        configuration:
+        - name: Ubuntu Clang 12
+          os: ubuntu-latest
+          extra-deps: ''
+          cxx: clang++-12
+          cc: clang-12
+
+        - name: Ubuntu GCC 11
+          os: ubuntu-latest
+          extra-deps: 'g++-11 gcc-11'
+          cxx: g++-11
+          cc: gcc-11
+
+    runs-on: ${{ matrix.configuration.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update &&
+        sudo apt-get install -y                  \
+          ${{ matrix.configuration.extra-deps }} \
+          tcl expect gdb cmake
+
+    - name: Make CMake build directory
+      run: mkdir ${{ runner.workspace }}/build
+
+    - name: CMake Configure
+      working-directory: ${{ runner.workspace }}/build
+      env:
+        CXX: ${{ matrix.configuration.cxx }}
+        CC: ${{ matrix.configuration.cc }}
+      run: >-
+        cmake
+        -DCOSMIC_SELF_CONTAINED=ON
+        -DCMAKE_BUILD_TYPE=Release
+        ${{ github.workspace }}
+
+    - name: CMake Build
+      run: cmake --build ${{ runner.workspace }}/build
+
+    - name: CTest
+      run: ctest --test-dir ${{ runner.workspace }}/build -V

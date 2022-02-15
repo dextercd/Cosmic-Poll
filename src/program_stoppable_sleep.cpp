@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <sys/select.h>
 #include <sys/signalfd.h>
+#include <unistd.h>
 
 #include "program_stoppable_sleep.hpp"
 #include "signal_set.hpp"

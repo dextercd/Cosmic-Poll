@@ -18,6 +18,7 @@ add_test(NAME "Read barrier" COMMAND read_barrier_test)
 
 find_package(Tclsh)
 find_package(TclExpect)
+find_package(TclSQLite3)
 find_package(GDB)
 
 if (TCLSH_FOUND AND TCL_EXPECT_FOUND AND GDB_FOUND)

@@ -1,6 +1,6 @@
 find_package(Tclsh)
 
-set(TCL_EXPECT_FOUND FALSE CACHE BOOL "Assume TCL_EXPECT is found")
+set(TCL_EXPECT_FOUND FALSE CACHE BOOL "Assume TclExpect is found")
 
 if (TCLSH_FOUND)
     execute_process(

@@ -32,7 +32,7 @@ expect_running
 
 expect {
     timeout {fail timeout}
-    -re {Anomaly detected at offset ([0-9a-f]*) value ([0-9a-f]*)}
+    -re "Anomaly detected at offset (\[0-9a-f\]*) value (\[0-9a-f\]*)\r\n"
 }
 
 set detected_offset "0x$expect_out(1,string)"

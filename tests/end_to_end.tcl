@@ -1,55 +1,58 @@
+package require tcltest 2.5
+
+set split_point [lsearch $argv --]
+set program_args [lrange $argv [expr $split_point + 1] end]
+set argv [lrange $argv 0 [expr $split_point - 1]]
+
+::tcltest::configure {*}$::argv
+
 package require Expect
 
 set script_dir [file dirname [info script]]
 source [file join $script_dir "expect_gdb_helpers.tcl"]
 
-lassign $argv gdb_location cosmic_poll_location
+tcltest::test gdb-bytewrite {
+    Writing a byte to the mmapped area should cause the program to stop and
+    report that an anomaly was detected. The output values should be consistent
+    with what was written to memory.
+} -setup {
+    lassign $program_args gdb_location cosmic_poll_location
 
-set cosmic_poll_info [start_cosmic_poll $gdb_location $cosmic_poll_location]
+    set cosmic_poll_info [start_cosmic_poll $gdb_location $cosmic_poll_location]
+    set db_location [dict get $cosmic_poll_info db_location]
+    set alloc_size [dict get $cosmic_poll_info alloc_size]
+    set monitored_address [dict get $cosmic_poll_info monitored_address]
 
-exp_send -- "-exec-continue\r"
-expect_running
+    exp_send -- "-exec-continue\r"
+    expect_running
 
-sleep 2
-exp_send -- "-exec-interrupt\r"
+    sleep 2
+    exp_send -- "-exec-interrupt\r"
 
-expect {
-    timeout {fail timeout}
-    "\*stopped*signal-received"
+    expect {
+        timeout {fail timeout}
+        "\*stopped*signal-received"
+    }
+
+    set offset [expr {int(rand() * $alloc_size)}]
+    set value [expr {int(rand() * 256)}]
+    set in_memory_offset [expr {$monitored_address + $offset}]
+
+    exp_send -- "-data-write-memory-bytes $in_memory_offset [format %02x $value]\r"
+    expect_done
+    exp_send -- "-exec-continue\r"
+    expect_running
+
+    expect {
+        timeout {fail timeout}
+        -re "Anomaly detected at offset (\[0-9a-f\]*) value (\[0-9a-f\]*)\r\n"
+    }
+
+    set detected_offset "0x$expect_out(1,string)"
+    set detected_value "0x$expect_out(2,string)"
+} -body {
+    assert {$offset == $detected_offset} "Offset"
+    assert {$value == $detected_value} "Value"
+} -cleanup {
+    file delete -- $db_location
 }
-
-set alloc_size [dict get $cosmic_poll_info alloc_size]
-set monitored_address [dict get $cosmic_poll_info monitored_address]
-
-set offset [expr {int(rand() * $alloc_size)}]
-set value [expr {int(rand() * 256)}]
-set in_memory_offset [expr {$monitored_address + $offset}]
-
-exp_send -- "-data-write-memory-bytes $in_memory_offset [format %02x $value]\r"
-expect_done
-exp_send -- "-exec-continue\r"
-expect_running
-
-expect {
-    timeout {fail timeout}
-    -re "Anomaly detected at offset (\[0-9a-f\]*) value (\[0-9a-f\]*)\r\n"
-}
-
-set detected_offset "0x$expect_out(1,string)"
-set detected_value "0x$expect_out(2,string)"
-
-if {$offset != $detected_offset} {
-    send_user "Got $detected_offset offset but should have been $offset offset\n"
-    exit 1
-}
-
-if {$value != $detected_value} {
-    send_user "Got $detected_value value but should have been $value value\n"
-    exit 1
-}
-
-set db_location [dict get $cosmic_poll_info db_location]
-file delete -- $db_location
-
-send_user "Success!\n"
-exit 0

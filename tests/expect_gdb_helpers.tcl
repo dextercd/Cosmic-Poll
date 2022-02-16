@@ -1,7 +1,11 @@
 package require Expect
 
+proc assert {cond {msg "assertion failed"}} {
+    if {![uplevel 1 expr $cond]} {error $msg}
+}
+
 proc fail reason {
-    send_user "Failed: $reason\n"
+    error "Failed: $reason\n"
     exit 1
 }
 

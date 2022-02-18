@@ -5,6 +5,8 @@
 
 namespace copo {
 
+namespace {
+
 bool table_exists(sqlite_connection& connection, char const* const table)
 {
     auto statement = sqlite_statement{connection, R"(
@@ -34,6 +36,8 @@ int get_db_revision(sqlite_connection& connection)
 
     return 2;
 }
+
+} // namespace
 
 void create_log_db(sqlite_connection& connection)
 {

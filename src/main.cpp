@@ -22,6 +22,8 @@ enum exit_code {
     parse_error,
 };
 
+namespace {
+
 int run(copo::options const& opts)
 {
     void const* const memory =
@@ -68,6 +70,8 @@ int run(copo::options const& opts)
 
     return exit_code::success;
 }
+
+} // namespace
 
 int main(int argc, char** argv)
 {

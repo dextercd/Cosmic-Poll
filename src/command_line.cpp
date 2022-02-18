@@ -11,6 +11,8 @@
 
 namespace copo {
 
+namespace {
+
 std::map<std::string, std::uint64_t> create_duration_mapping()
 {
     auto const seconds = std::uint64_t{1000};
@@ -30,6 +32,8 @@ std::map<std::string, std::uint64_t> create_duration_mapping()
 
     return duration_mapping;
 }
+
+} // namespace
 
 parse_result parse_args(int argc, char const* const* argv)
 {

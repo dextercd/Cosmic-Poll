@@ -8,6 +8,8 @@
 #include "cancellable_sleep.hpp"
 #include "observation_logger.hpp"
 
+namespace copo {
+
 struct flip_detected {
     std::ptrdiff_t offset;
     unsigned char value;
@@ -20,5 +22,7 @@ using monitor_result = std::variant<flip_detected, cancelled>;
 monitor_result monitor_memory(
         void const* const memory, std::size_t const size, cancellable_sleep& csleep,
         observation_logger& logger, std::chrono::milliseconds polling_interval);
+
+} // namespace copo
 
 #endif // header guard

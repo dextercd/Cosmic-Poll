@@ -8,6 +8,8 @@
 
 #include "observation_types.hpp"
 
+namespace copo {
+
 class observation_logger {
     struct base_engine {
         virtual void log_active_period(
@@ -66,5 +68,7 @@ public:
     void dump_active();
     void found_anomaly(std::size_t offset, unsigned char value);
 };
+
+} // namespace copo
 
 #endif // header guard

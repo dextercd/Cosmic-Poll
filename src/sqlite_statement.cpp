@@ -7,6 +7,8 @@
 
 #include "sqlite_statement.hpp"
 
+namespace copo {
+
 sqlite_statement::sqlite_statement(sqlite_connection& connection, char const* const sql)
 {
     auto const result = sqlite3_prepare_v3(
@@ -62,3 +64,5 @@ int sqlite_statement::column_count()
 {
     return sqlite3_column_count(handle);
 }
+
+} // namespace copo

@@ -8,6 +8,8 @@
 
 #include "log_db_engine.hpp"
 
+namespace copo {
+
 log_db_engine::log_db_engine(char const* filename)
     : connection{filename}
 {
@@ -47,3 +49,5 @@ void log_db_engine::log_anomaly(
     statement.bind(4, byte_count);
     statement.step_done();
 }
+
+} // namespace copo

@@ -3,12 +3,12 @@
 
 #include <chrono>
 
-namespace observation {
+namespace copo::observation {
 
 using duration = std::chrono::milliseconds;
 using clock = std::chrono::system_clock;
 using time_point = std::chrono::sys_time<duration>;
 
-} // namespace observation
+} // namespace copo::observation
 
 #endif // header guard

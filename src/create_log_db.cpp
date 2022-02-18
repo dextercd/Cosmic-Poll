@@ -3,6 +3,8 @@
 #include "sqlite_connection.hpp"
 #include "sqlite_statement.hpp"
 
+namespace copo {
+
 bool table_exists(sqlite_connection& connection, char const* const table)
 {
     auto statement = sqlite_statement{connection, R"(
@@ -60,3 +62,5 @@ void create_log_db(sqlite_connection& connection)
         statement.step_done();
     }
 }
+
+} // namespace copo

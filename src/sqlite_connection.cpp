@@ -3,6 +3,8 @@
 #include "sqlite_connection.hpp"
 #include "sqlite_exception.hpp"
 
+namespace copo {
+
 sqlite_connection::sqlite_connection(char const* const filename)
 {
     auto const result = sqlite3_open_v2(
@@ -32,3 +34,5 @@ void sqlite_connection::close_connection()
     sqlite3_close(handle);
     handle = nullptr;
 }
+
+} // namespace copo

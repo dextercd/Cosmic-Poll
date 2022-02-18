@@ -3,6 +3,8 @@
 
 struct sqlite3;
 
+namespace copo {
+
 class sqlite_connection {
     sqlite3* handle;
 
@@ -39,5 +41,7 @@ public:
 
     friend class sqlite_statement;
 };
+
+} // namespace copo
 
 #endif // header guard

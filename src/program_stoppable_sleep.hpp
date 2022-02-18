@@ -5,6 +5,8 @@
 
 #include "cancellable_sleep.hpp"
 
+namespace copo {
+
 class program_stoppable_sleep {
 private:
     int signalfd = -1;
@@ -34,5 +36,7 @@ public:
 
     sleep_result sleep(std::chrono::milliseconds units);
 };
+
+} // namespace copo
 
 #endif // header guard

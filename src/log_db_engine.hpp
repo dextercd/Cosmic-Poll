@@ -6,6 +6,8 @@
 #include "observation_types.hpp"
 #include "sqlite_connection.hpp"
 
+namespace copo {
+
 class log_db_engine {
 private:
     sqlite_connection connection;
@@ -21,5 +23,7 @@ public:
             observation::time_point now, std::size_t offset, unsigned char value,
             std::size_t byte_count);
 };
+
+} // namespace copo
 
 #endif // header guard

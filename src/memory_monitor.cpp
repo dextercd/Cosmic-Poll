@@ -7,6 +7,8 @@
 #include "compiler_barrier.hpp"
 #include "memory_monitor.hpp"
 
+namespace copo {
+
 monitor_result monitor_memory(
         void const* const memory, std::size_t const size, cancellable_sleep& csleep,
         observation_logger& logger, std::chrono::milliseconds polling_interval)
@@ -37,3 +39,5 @@ monitor_result monitor_memory(
             return cancelled{};
     }
 }
+
+} // namespace copo

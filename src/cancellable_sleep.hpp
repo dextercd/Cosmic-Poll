@@ -4,6 +4,8 @@
 #include <chrono>
 #include <memory>
 
+namespace copo {
+
 enum class sleep_result {
     slept,
     cancelled,
@@ -47,5 +49,7 @@ public:
         return impl->sleep(units);
     }
 };
+
+} // namespace copo
 
 #endif // header guard

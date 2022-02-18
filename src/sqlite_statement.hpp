@@ -6,6 +6,9 @@
 #include "sqlite_exception.hpp"
 
 struct sqlite3_stmt;
+
+namespace copo {
+
 class sqlite_connection;
 
 enum class step_result {
@@ -61,5 +64,7 @@ public:
 
     int column_count();
 };
+
+} // namespace copo
 
 #endif // header guard

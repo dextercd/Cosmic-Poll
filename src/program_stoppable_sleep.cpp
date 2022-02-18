@@ -9,6 +9,8 @@
 #include "program_stoppable_sleep.hpp"
 #include "signal_set.hpp"
 
+namespace copo {
+
 class program_stop_detect_engine {
 private:
     signal_set const signals{SIGHUP, SIGINT, SIGTERM};
@@ -72,3 +74,5 @@ sleep_result program_stoppable_sleep::sleep(std::chrono::milliseconds units)
 
     return result == 0 ? sleep_result::slept : sleep_result::cancelled;
 }
+
+} // namespace copo

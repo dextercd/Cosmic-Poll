@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <signal.h>
 
+namespace copo {
+
 struct signal_set {
     sigset_t handle;
 
@@ -44,5 +46,7 @@ struct signal_set {
             add(signal);
     }
 };
+
+} // namespace copo
 
 #endif // header guard

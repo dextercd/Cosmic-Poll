@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <variant>
 
+namespace copo {
+
 struct options {
     std::uint64_t alloc_size;
     std::chrono::milliseconds check_interval;
@@ -19,5 +21,7 @@ enum class no_options {
 using parse_result = std::variant<options, no_options>;
 
 parse_result parse_args(int argc, char const* const* argv);
+
+} // namespace copo
 
 #endif // header guard

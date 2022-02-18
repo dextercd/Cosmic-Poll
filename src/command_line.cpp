@@ -9,6 +9,8 @@
 #include "command_line.hpp"
 #include "compile_paths.hpp"
 
+namespace copo {
+
 std::map<std::string, std::uint64_t> create_duration_mapping()
 {
     auto const seconds = std::uint64_t{1000};
@@ -62,3 +64,5 @@ parse_result parse_args(int argc, char const* const* argv)
 
     return options{alloc_size, check_interval, db_location};
 }
+
+} // namespace copo

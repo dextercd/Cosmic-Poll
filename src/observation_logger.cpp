@@ -2,6 +2,8 @@
 
 #include "observation_logger.hpp"
 
+namespace copo {
+
 auto const log_every = std::chrono::minutes{30};
 
 observation_logger::observation_logger(std::size_t const bc)
@@ -50,3 +52,5 @@ void observation_logger::found_anomaly(
     engine->log_anomaly(period_end, offset, value, byte_count);
     dump_active();
 }
+
+} // namespace copo

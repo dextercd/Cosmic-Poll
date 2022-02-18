@@ -3,7 +3,7 @@ add_executable(read_barrier_test
 )
 
 target_include_directories(read_barrier_test
-    PRIVATE ${CosmicPoll_SOURCE_DIR}/src/
+    PRIVATE ${CosmicPoll_SOURCE_DIR}/src/cosmic_poll
 )
 
 target_link_libraries(read_barrier_test PRIVATE fmt::fmt)

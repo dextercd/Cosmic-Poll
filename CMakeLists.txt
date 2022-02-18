@@ -25,41 +25,14 @@ else()
     find_package(CLI11 REQUIRED)
 endif()
 
-add_library(sqlite_wrapper
-    src/sqlite_connection.cpp
-    src/sqlite_statement.cpp
-)
+add_subdirectory(src)
 
-target_link_libraries(sqlite_wrapper
-    PRIVATE
-        SQLite::SQLite3
-)
-
-set_property(SOURCE src/compile_paths.cpp
+set_property(
+    SOURCE src/cosmic_poll/compile_paths.cpp TARGET_DIRECTORY cosmic_poll
     APPEND
     PROPERTY COMPILE_DEFINITIONS
         "COSMIC_DEFAULT_DB_LOCATION=\"${COSMIC_DEFAULT_DB_LOCATION}\""
 )
-
-add_executable(cosmic_poll
-    src/main.cpp
-    src/program_stoppable_sleep.cpp
-    src/observation_logger.cpp
-    src/log_db_engine.cpp
-    src/create_log_db.cpp
-    src/memory_monitor.cpp
-    src/command_line.cpp
-    src/compile_paths.cpp
-)
-
-target_link_libraries(cosmic_poll
-    PRIVATE
-        fmt::fmt
-        sqlite_wrapper
-        CLI11::CLI11
-)
-
-target_compile_features(cosmic_poll PRIVATE cxx_std_20)
 
 if (BUILD_TESTING)
     add_subdirectory(tests)

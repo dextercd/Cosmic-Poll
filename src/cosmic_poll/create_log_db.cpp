@@ -1,7 +1,7 @@
 #include <stdexcept>
 
-#include "sqlite_connection.hpp"
-#include "sqlite_statement.hpp"
+#include <copo/sqlite/sqlite_connection.hpp>
+#include <copo/sqlite/sqlite_statement.hpp>
 
 namespace copo {
 

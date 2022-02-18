@@ -4,7 +4,7 @@
 #include <cstddef>
 
 #include "observation_types.hpp"
-#include "sqlite_connection.hpp"
+#include <copo/sqlite/sqlite_connection.hpp>
 
 namespace copo {
 

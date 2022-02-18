@@ -4,7 +4,7 @@
 #include <fmt/core.h>
 
 #include "create_log_db.hpp"
-#include "sqlite_statement.hpp"
+#include <copo/sqlite/sqlite_statement.hpp>
 
 #include "log_db_engine.hpp"
 

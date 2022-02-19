@@ -69,3 +69,5 @@ tcltest::test sqlite {
 } -cleanup {
     file delete -- $db_location
 }
+
+exit_test

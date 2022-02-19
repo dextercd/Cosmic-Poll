@@ -10,3 +10,7 @@ proc fail reason {
 proc random_file_name {} {
     return [expr int(999999999 * rand())]
 }
+
+proc exit_test {} {
+    exit [expr {$tcltest::numTests(Failed) != 0}]
+}

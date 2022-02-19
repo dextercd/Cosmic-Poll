@@ -1,13 +1,7 @@
 package require Expect
 
-proc assert {cond {msg "assertion failed"}} {
-    if {![uplevel 1 expr $cond]} {error $msg}
-}
-
-proc fail reason {
-    error "Failed: $reason\n"
-    exit 1
-}
+set script_dir [file dirname [info script]]
+source [file join $script_dir "test_helpers.tcl"]
 
 set gdb_prompt "(gdb) \r\n"
 
@@ -30,10 +24,6 @@ proc expect_running {{prefix ""}} {
         timeout {fail timeout}
         -ex "$prefix^running"
     }
-}
-
-proc random_file_name {} {
-    return [expr int(999999999 * rand())]
 }
 
 # alloc_size must be <= 256 MiB on GitHub Actions according to this doc

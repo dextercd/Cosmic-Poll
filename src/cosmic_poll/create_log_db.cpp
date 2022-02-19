@@ -49,7 +49,7 @@ void create_log_db(sqlite_connection& connection)
                 seconds REAL,
                 time_submitted TEXT,
                 bytes INTEGER
-            ) STRICT;)"};
+            );)"};
 
         statement.step_done();
     }
@@ -61,7 +61,7 @@ void create_log_db(sqlite_connection& connection)
                 offset INTEGER,
                 value INTEGER,
                 bytes INTEGER
-            ) STRICT;)"};
+            );)"};
 
         statement.step_done();
     }

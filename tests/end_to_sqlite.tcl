@@ -18,7 +18,7 @@ tcltest::test sqlite {
 } -setup {
     lassign $program_args gdb_location cosmic_poll_location
 
-    set cosmic_poll_info [start_cosmic_poll $gdb_location $cosmic_poll_location]
+    set cosmic_poll_info [start_gdb_cosmic_poll $gdb_location $cosmic_poll_location]
 
     set db_location [dict get $cosmic_poll_info db_location]
     set alloc_size [dict get $cosmic_poll_info alloc_size]

@@ -30,7 +30,7 @@ proc expect_running {{prefix ""}} {
 # https://github.com/actions/virtual-environments/pull/1463
 # But in my experience it must be even lower than that.
 
-proc start_cosmic_poll {
+proc start_gdb_cosmic_poll {
         {gdb_command gdb}
         {cosmic_poll_command cosmic_poll}
         {alloc_size 65536}

@@ -45,3 +45,14 @@ else()
     message(STATUS "TCL_SQLITE3_FOUND: ${TCL_SQLITE3_FOUND}")
     message(STATUS "GDB_FOUND: ${GDB_FOUND}")
 endif()
+
+if (TCLSH_FOUND AND TCL_EXPECT_FOUND)
+    add_test(NAME "Stop signal"
+        COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_SOURCE_DIR}/stop_signal.tcl
+            $<TARGET_FILE:cosmic_poll>
+    )
+else()
+    message(STATUS "Missing dependency for stop signal tests")
+    message(STATUS "TCLSH_FOUND: ${TCLSH_FOUND}")
+    message(STATUS "TCL_EXPECT_FOUND: ${TCL_EXPECT_FOUND}")
+endif()

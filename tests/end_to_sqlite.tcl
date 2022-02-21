@@ -30,6 +30,12 @@ tcltest::test sqlite {
     set run_for 2
     sleep $run_for
 
+    # This interrupt/continue is necessary in GDB 10, otherwise the memory write
+    # will give the following error:
+    #
+    # ^error,msg="Cannot access memory at address 0x7ffff7fc3643
+    #
+    # This doesn't seem to be an issue in GDB 11
     exp_send -- "-exec-interrupt\r"
 
     expect {

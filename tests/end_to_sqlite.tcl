@@ -44,10 +44,11 @@ tcltest::test sqlite {
     }
 
     set offset [expr {int(rand() * $alloc_size)}]
-    set value [expr {int(rand() * 256)}]
+    set write_value [expr {int(rand() * 256)}]
+    set expected_output_value [expr {$write_value  ^ 15}]
     set in_memory_offset [expr {$monitored_address + $offset}]
 
-    exp_send -- "-data-write-memory-bytes $in_memory_offset [format %02x $value]\r"
+    exp_send -- "-data-write-memory-bytes $in_memory_offset [format %02x $write_value]\r"
     expect_done
     exp_send -- "-exec-continue\r"
     expect_running
@@ -62,7 +63,7 @@ tcltest::test sqlite {
     assert {[db eval {SELECT COUNT(*) FROM anomalies}] == 1} "There should only be one anomaly"
     db eval {SELECT * FROM anomalies} anomaly {
         assert {$anomaly(offset) == $offset} "Offset in db should be $offset"
-        assert {$anomaly(value) == $value} "Value in db should be $value"
+        assert {$anomaly(value) == $expected_output_value} "Value in db should be $expected_output_value"
         assert {$anomaly(bytes) == $alloc_size} "Byte count in db should be $alloc_size"
     }
 

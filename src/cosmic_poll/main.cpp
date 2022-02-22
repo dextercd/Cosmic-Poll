@@ -24,16 +24,19 @@ enum exit_code {
 
 namespace {
 
+unsigned char const mask = 0b0000'1111;
+
 int run(copo::options const& opts)
 {
-    void const* const memory =
+    auto const memory = static_cast<unsigned char*>(
             mmap(nullptr,                                  // addr
                  opts.alloc_size,                          // length
                  PROT_READ | PROT_WRITE,                   // prot
                  MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, // flags
                  -1,                                       // fd
-                 0                                         // offset
-            );
+                 0));                                      // offset
+
+    std::fill(memory, memory + opts.alloc_size, mask);
 
     if (memory == (void*)-1) {
         auto const mmap_errno = errno;
@@ -49,12 +52,12 @@ int run(copo::options const& opts)
     }
 
     copo::observation_logger logger{
-            copo::log_db_engine{opts.db_location.c_str()}, opts.alloc_size};
+            copo::log_db_engine{opts.db_location.c_str()}, opts.alloc_size, mask};
 
     copo::cancellable_sleep csleep{copo::program_stoppable_sleep{}};
 
     auto const result = copo::monitor_memory(
-            memory, opts.alloc_size, csleep, logger, opts.check_interval);
+            memory, opts.alloc_size, csleep, logger, opts.check_interval, mask);
     fmt::print("\n");
 
     if (std::holds_alternative<copo::flip_detected>(result)) {

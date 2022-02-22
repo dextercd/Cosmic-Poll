@@ -26,6 +26,27 @@ bool table_exists(sqlite_connection& connection, char const* const table)
     }
 }
 
+bool column_exists(sqlite_connection& conn, char const* table, char const* column)
+{
+    auto statement = sqlite_statement{conn, R"(
+        SELECT 1
+        FROM pragma_table_info(?)
+        WHERE name=?;
+    )"};
+
+    statement.bind(1, table);
+    statement.bind(2, column);
+
+    switch (statement.step()) {
+    case step_result::row:
+        return true;
+    case step_result::done:
+        return false;
+    default:
+        throw std::runtime_error{"Unexpected step result."};
+    }
+}
+
 int get_db_revision(sqlite_connection& connection)
 {
     if (!table_exists(connection, "active_times"))
@@ -34,7 +55,13 @@ int get_db_revision(sqlite_connection& connection)
     if (!table_exists(connection, "anomalies"))
         return 1;
 
-    return 2;
+    if (!column_exists(connection, "active_times", "mask"))
+        return 2;
+
+    if (!column_exists(connection, "anomalies", "mask"))
+        return 3;
+
+    return 4;
 }
 
 } // namespace
@@ -64,6 +91,34 @@ void create_log_db(sqlite_connection& connection)
             );)"};
 
         statement.step_done();
+    }
+
+    if (initial_version < 3) {
+        auto statement1 = sqlite_statement{connection, R"(
+            ALTER TABLE active_times ADD COLUMN mask INTEGER;
+        )"};
+
+        statement1.step_done();
+
+        auto statement2 = sqlite_statement{connection, R"(
+            UPDATE active_times SET mask=0 WHERE mask IS NULL;
+        )"};
+
+        statement2.step_done();
+    }
+
+    if (initial_version < 4) {
+        auto statement1 = sqlite_statement{connection, R"(
+            ALTER TABLE anomalies ADD COLUMN mask INTEGER;
+        )"};
+
+        statement1.step_done();
+
+        auto statement2 = sqlite_statement{connection, R"(
+            UPDATE anomalies SET mask=0 WHERE mask IS NULL;
+        )"};
+
+        statement2.step_done();
     }
 }
 

@@ -17,11 +17,11 @@ public:
 
     void log_active_period(
             observation::duration duration, observation::time_point now,
-            std::size_t byte_count);
+            std::size_t byte_count, unsigned char mask);
 
     void log_anomaly(
             observation::time_point now, std::size_t offset, unsigned char value,
-            std::size_t byte_count);
+            std::size_t byte_count, unsigned char mask);
 };
 
 } // namespace copo

@@ -6,11 +6,12 @@ namespace copo {
 
 auto const log_every = std::chrono::minutes{30};
 
-observation_logger::observation_logger(std::size_t const bc)
+observation_logger::observation_logger(std::size_t bc, unsigned char mask)
     : period_start{std::chrono::time_point_cast<observation::duration>(
               observation::clock::now())}
     , period_end{period_start}
     , byte_count{bc}
+    , mask{mask}
 {
 }
 
@@ -36,7 +37,7 @@ void observation_logger::dump_active()
         activity_in_period = false;
 
         auto const duration = period_end - period_start;
-        engine->log_active_period(duration, period_end, byte_count);
+        engine->log_active_period(duration, period_end, byte_count, mask);
 
         period_start = period_end;
     }
@@ -49,7 +50,7 @@ void observation_logger::found_anomaly(
             observation::clock::now());
     activity_in_period = true;
 
-    engine->log_anomaly(period_end, offset, value, byte_count);
+    engine->log_anomaly(period_end, offset, value, byte_count, mask);
     dump_active();
 }
 

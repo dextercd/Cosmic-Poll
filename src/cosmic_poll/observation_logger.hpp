@@ -14,10 +14,10 @@ class observation_logger {
     struct base_engine {
         virtual void log_active_period(
                 observation::duration duration, observation::time_point now,
-                std::size_t byte_count) = 0;
+                std::size_t byte_count, unsigned char mask) = 0;
         virtual void log_anomaly(
                 observation::time_point now, std::size_t offset, unsigned char value,
-                std::size_t byte_count) = 0;
+                std::size_t byte_count, unsigned char mask) = 0;
         virtual ~base_engine() = default;
     };
 
@@ -26,14 +26,15 @@ class observation_logger {
     observation::time_point period_end;
     bool activity_in_period = false;
     std::size_t byte_count;
+    unsigned char mask;
 
 private:
-    explicit observation_logger(std::size_t byte_count);
+    explicit observation_logger(std::size_t byte_count, unsigned char mask);
 
 public:
     template<class Engine>
-    observation_logger(Engine&& implementation, std::size_t byte_count)
-        : observation_logger(byte_count)
+    observation_logger(Engine&& implementation, std::size_t byte_count, unsigned char mask)
+        : observation_logger(byte_count, mask)
     {
         struct wrapper : base_engine {
             using engine_type = std::remove_cvref_t<Engine>;
@@ -46,16 +47,16 @@ public:
 
             void log_active_period(
                     observation::duration duration, observation::time_point now,
-                    std::size_t byte_count) override
+                    std::size_t byte_count, unsigned char mask) override
             {
-                return engine.log_active_period(duration, now, byte_count);
+                return engine.log_active_period(duration, now, byte_count, mask);
             }
 
             void log_anomaly(
                     observation::time_point now, std::size_t offset, unsigned char value,
-                    std::size_t byte_count) override
+                    std::size_t byte_count, unsigned char mask) override
             {
-                return engine.log_anomaly(now, offset, value, byte_count);
+                return engine.log_anomaly(now, offset, value, byte_count, mask);
             }
         };
 

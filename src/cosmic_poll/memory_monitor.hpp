@@ -21,7 +21,7 @@ using monitor_result = std::variant<flip_detected, cancelled>;
 
 monitor_result monitor_memory(
         void const* const memory, std::size_t const size, cancellable_sleep& csleep,
-        observation_logger& logger, std::chrono::milliseconds polling_interval);
+        observation_logger& logger, std::chrono::milliseconds polling_interval, unsigned char mask);
 
 } // namespace copo
 

@@ -21,9 +21,12 @@ public:
 
     sqlite_connection& operator=(sqlite_connection&& other)
     {
-        close_connection();
-        handle = other.handle;
-        other.handle = nullptr;
+        if (this != &other) {
+            close_connection();
+            handle = other.handle;
+            other.handle = nullptr;
+        }
+
         return *this;
     }
 

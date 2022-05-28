@@ -28,9 +28,12 @@ public:
 
     program_stoppable_sleep& operator=(program_stoppable_sleep&& other)
     {
-        close();
-        signalfd = other.signalfd;
-        other.signalfd = -1;
+        if (this != &other) {
+            close();
+            signalfd = other.signalfd;
+            other.signalfd = -1;
+        }
+
         return *this;
     }
 

@@ -28,6 +28,7 @@ unsigned char const mask = 0b0000'1111;
 
 int run(copo::options const& opts)
 {
+    fmt::print(stderr, "Size: {}\n", opts.alloc_size);
     auto const memory = static_cast<unsigned char*>(
             mmap(nullptr,                                  // addr
                  opts.alloc_size,                          // length
@@ -36,13 +37,13 @@ int run(copo::options const& opts)
                  -1,                                       // fd
                  0));                                      // offset
 
-    std::fill(memory, memory + opts.alloc_size, mask);
-
     if (memory == (void*)-1) {
         auto const mmap_errno = errno;
         fmt::print(stderr, "mmap failed with error code: {}\n", strerror(mmap_errno));
         return exit_code::memory_alloc_error;
     }
+
+    std::fill(memory, memory + opts.alloc_size, mask);
 
     auto const mlock_status = mlock(memory, opts.alloc_size);
     if (mlock_status == -1) {

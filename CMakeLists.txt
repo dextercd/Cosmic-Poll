@@ -23,6 +23,7 @@ else()
     find_package(fmt REQUIRED)
     find_package(SQLite3 REQUIRED)
     find_package(CLI11 REQUIRED)
+    find_package(TBB REQUIRED COMPONENTS tbb)
 endif()
 
 add_subdirectory(src)

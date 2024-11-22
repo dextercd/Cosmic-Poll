@@ -14,6 +14,7 @@ target_link_libraries(cosmic_poll
         fmt::fmt
         sqlite_wrapper
         CLI11::CLI11
+        tbb
 )
 
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)

@@ -5,6 +5,7 @@
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
+#include <CLI/ExtraValidators.hpp>
 
 #include "command_line.hpp"
 #include "compile_paths.hpp"

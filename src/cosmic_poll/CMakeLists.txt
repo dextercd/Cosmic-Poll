@@ -17,4 +17,9 @@ target_link_libraries(cosmic_poll
         tbb
 )
 
+target_compile_definitions(cosmic_poll
+    PRIVATE
+        CLI11_ENABLE_EXTRA_VALIDATORS=1
+)
+
 target_compile_features(cosmic_poll PRIVATE cxx_std_20)
